@@ -8,3 +8,7 @@ export { StudentProfileScreen } from './StudentProfileScreen';
 export { StudentDocumentsScreen } from './StudentDocumentsScreen';
 export { StudentAcademicRecordsScreen } from './StudentAcademicRecordsScreen';
 export { StudentExamSchedulesScreen } from './StudentExamSchedulesScreen';
+export { StudentChatbotScreen } from './StudentChatbotScreen';
+export { StudentTimetableScreen } from './StudentTimetableScreen';
+export { StudentLibraryScreen } from './StudentLibraryScreen';
+

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,39 +9,102 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ScreenContainer, GlassCard, StatusBadge, GlassButton } from '../../components';
-import { dummyGrievances } from '../../data/dummy';
+import { useAuth } from '../../context/AuthContext';
 import { colors, spacing } from '../../theme';
+import { API_BASE_URL } from '../../config';
+
+interface Grievance {
+  id: number;
+  subject: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'resolved';
+  createdAt: string;
+  response?: string;
+}
 
 export function StudentGrievancesScreen() {
+  const { user } = useAuth();
   const [modalVisible, setModalVisible] = useState(false);
   const [subject, setSubject] = useState('');
   const [description, setDescription] = useState('');
-  const [localGrievances, setLocalGrievances] = useState<typeof dummyGrievances>([]);
+  const [grievances, setGrievances] = useState<Grievance[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const grievances = [...dummyGrievances, ...localGrievances];
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    setLoading(true);
+    fetch(`${API_BASE_URL}/api/student/${user.id}/grievances`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch grievances');
+        return res.json();
+      })
+      .then((data) => {
+        const mapped = data.map((item: any) => ({
+          id: item.id,
+          subject: item.subject,
+          description: item.description,
+          status: item.status,
+          createdAt: new Date(item.created_at).toLocaleDateString(),
+          response: item.response || undefined,
+        }));
+        setGrievances(mapped);
+      })
+      .catch((err) => {
+        console.error('Error fetching grievances:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [user?.id]);
 
   const handleSubmit = () => {
-    if (!subject.trim() || !description.trim()) return;
-    setLocalGrievances((prev) => [
-      ...prev,
-      {
-        id: `g-${Date.now()}`,
-        studentId: '1',
+    if (!subject.trim() || !description.trim() || !user?.id || submitting) return;
+
+    setSubmitting(true);
+    fetch(`${API_BASE_URL}/api/student/${user.id}/grievances`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         subject: subject.trim(),
         description: description.trim(),
-        status: 'pending' as const,
-        createdAt: new Date().toISOString().split('T')[0],
-      },
-    ]);
-    setSubject('');
-    setDescription('');
-    setModalVisible(false);
+      }),
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to submit grievance');
+        return res.json();
+      })
+      .then((newG) => {
+        const mapped: Grievance = {
+          id: newG.id,
+          subject: newG.subject,
+          description: newG.description,
+          status: newG.status,
+          createdAt: new Date(newG.created_at).toLocaleDateString(),
+          response: newG.response || undefined,
+        };
+        setGrievances((prev) => [mapped, ...prev]);
+        setSubject('');
+        setDescription('');
+        setModalVisible(false);
+      })
+      .catch((err) => {
+        console.error('Error submitting grievance:', err);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   };
 
   const handleClose = () => {
+    if (submitting) return;
     setModalVisible(false);
     setSubject('');
     setDescription('');
@@ -53,26 +116,38 @@ export function StudentGrievancesScreen() {
         <Text style={styles.title}>My Grievances</Text>
         <Text style={styles.subtitle}>Track and submit</Text>
       </Animated.View>
-      {grievances.map((g, i) => (
-        <Animated.View key={g.id} entering={FadeInDown.delay(i * 50).springify().damping(20)}>
-          <GlassCard rounded="lg" style={styles.card}>
-            <View style={styles.row}>
-              <Text style={styles.subject}>{g.subject}</Text>
-              <StatusBadge status={g.status} />
-            </View>
-            <Text style={styles.desc} numberOfLines={2}>
-              {g.description}
-            </Text>
-            <Text style={styles.date}>{g.createdAt}</Text>
-            {g.response && (
-              <View style={styles.responseWrap}>
-                <Text style={styles.responseLabel}>Response:</Text>
-                <Text style={styles.response}>{g.response}</Text>
+
+      {loading ? (
+        <View style={styles.centered}>
+          <ActivityIndicator size="large" color="#E07C3C" />
+        </View>
+      ) : grievances.length === 0 ? (
+        <View style={styles.centered}>
+          <Text style={styles.emptyText}>No grievances submitted.</Text>
+        </View>
+      ) : (
+        grievances.map((g, i) => (
+          <Animated.View key={g.id} entering={FadeInDown.delay(i * 50).springify().damping(20)}>
+            <GlassCard rounded="lg" style={styles.card}>
+              <View style={styles.row}>
+                <Text style={styles.subject}>{g.subject}</Text>
+                <StatusBadge status={g.status} />
               </View>
-            )}
-          </GlassCard>
-        </Animated.View>
-      ))}
+              <Text style={styles.desc} numberOfLines={2}>
+                {g.description}
+              </Text>
+              <Text style={styles.date}>{g.createdAt}</Text>
+              {g.response && (
+                <View style={styles.responseWrap}>
+                  <Text style={styles.responseLabel}>Response:</Text>
+                  <Text style={styles.response}>{g.response}</Text>
+                </View>
+              )}
+            </GlassCard>
+          </Animated.View>
+        ))
+      )}
+
       <GlassButton
         title="+ New Grievance"
         onPress={() => setModalVisible(true)}
@@ -105,6 +180,7 @@ export function StudentGrievancesScreen() {
               placeholderTextColor={colors.textMuted}
               value={subject}
               onChangeText={setSubject}
+              editable={!submitting}
             />
             <View style={styles.inputUnderline} />
 
@@ -117,19 +193,27 @@ export function StudentGrievancesScreen() {
               onChangeText={setDescription}
               multiline
               numberOfLines={4}
+              editable={!submitting}
             />
             <View style={styles.inputUnderline} />
 
             <View style={styles.modalActions}>
-              <Pressable onPress={handleClose} style={styles.cancelBtn}>
+              <Pressable onPress={handleClose} style={styles.cancelBtn} disabled={submitting}>
                 <Text style={styles.cancelBtnText}>Cancel</Text>
               </Pressable>
               <Pressable
                 onPress={handleSubmit}
-                style={[styles.submitBtn, (!subject.trim() || !description.trim()) && styles.submitBtnDisabled]}
-                disabled={!subject.trim() || !description.trim()}
+                style={[
+                  styles.submitBtn,
+                  (!subject.trim() || !description.trim() || submitting) && styles.submitBtnDisabled,
+                ]}
+                disabled={!subject.trim() || !description.trim() || submitting}
               >
-                <Text style={styles.submitBtnText}>Submit</Text>
+                {submitting ? (
+                  <ActivityIndicator size="small" color="#FFF" />
+                ) : (
+                  <Text style={styles.submitBtnText}>Submit</Text>
+                )}
               </Pressable>
             </View>
           </View>
@@ -161,6 +245,8 @@ const styles = StyleSheet.create({
   responseLabel: { color: colors.primary, fontSize: 12, fontWeight: '600' },
   response: { color: colors.textSecondary, fontSize: 13, marginTop: 2 },
   addBtn: { marginTop: spacing.md, paddingBottom: 88 },
+  centered: { padding: spacing.xl, alignItems: 'center', justifyContent: 'center' },
+  emptyText: { color: colors.textSecondary, fontSize: 14 },
 
   modalOverlay: {
     flex: 1,
@@ -219,6 +305,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     backgroundColor: colors.primary,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   submitBtnDisabled: { opacity: 0.5 },
   submitBtnText: { color: colors.white, fontWeight: '600' },

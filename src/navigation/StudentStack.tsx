@@ -5,6 +5,10 @@ import {
   StudentDocumentsScreen,
   StudentAcademicRecordsScreen,
   StudentExamSchedulesScreen,
+  StudentChatbotScreen,
+  StudentFeesScreen,
+  StudentTimetableScreen,
+  StudentLibraryScreen,
 } from '../screens/student';
 
 const Stack = createNativeStackNavigator();
@@ -22,6 +26,11 @@ export function StudentStack() {
       <Stack.Screen name="StudentDocuments" component={StudentDocumentsScreen} />
       <Stack.Screen name="StudentAcademicRecords" component={StudentAcademicRecordsScreen} />
       <Stack.Screen name="StudentExamSchedules" component={StudentExamSchedulesScreen} />
+      <Stack.Screen name="StudentChatbot" component={StudentChatbotScreen} />
+      <Stack.Screen name="StudentFees" component={StudentFeesScreen} />
+      <Stack.Screen name="StudentTimetable" component={StudentTimetableScreen} />
+      <Stack.Screen name="StudentLibrary" component={StudentLibraryScreen} />
     </Stack.Navigator>
   );
 }
+

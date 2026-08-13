@@ -13,7 +13,7 @@ import { ScreenContainer, GlassCard, Avatar } from '../../components';
 import { useAuth } from '../../context/AuthContext';
 import { colors, spacing } from '../../theme';
 
-export function TeacherProfileScreen() {
+export function TeacherProfileScreen({ navigation }: { navigation?: any }) {
   const { user, logout } = useAuth();
   const ringScale = useSharedValue(1);
 
@@ -47,12 +47,53 @@ export function TeacherProfileScreen() {
           {user?.department && <Text style={styles.dept}>{user.department}</Text>}
         </View>
       </Animated.View>
+      
       <GlassCard rounded="lg" style={styles.card}>
-        <Text style={styles.cardTitle}>Teacher</Text>
-        <Text style={styles.item}>Mark attendance</Text>
-        <Text style={styles.item}>View classes</Text>
-        <Text style={styles.item}>Resolve grievances</Text>
+        <Text style={styles.cardTitle}>Academic Quick Actions</Text>
+        <TouchableOpacity
+          style={styles.menuRow}
+          onPress={() => navigation?.navigate('TeacherTimetable')}
+        >
+          <View style={styles.menuRowLeft}>
+            <Ionicons name="calendar-outline" size={20} color={colors.primary} style={{ marginRight: spacing.sm }} />
+            <Text style={styles.menuRowText}>View Class Timetables</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={16} color={colors.textMuted} />
+        </TouchableOpacity>
       </GlassCard>
+
+      <GlassCard rounded="lg" style={styles.card}>
+        <Text style={styles.cardTitle}>Personal Profile</Text>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Employee ID</Text>
+          <Text style={styles.detailValue}>{user?.employee_id || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Designation</Text>
+          <Text style={styles.detailValue}>{user?.designation || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Date of Birth</Text>
+          <Text style={styles.detailValue}>{user?.dob || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Phone Number</Text>
+          <Text style={styles.detailValue}>{user?.phone || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Gender</Text>
+          <Text style={styles.detailValue}>{user?.gender || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Blood Group</Text>
+          <Text style={styles.detailValue}>{user?.blood_group || 'N/A'}</Text>
+        </View>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Home Address</Text>
+          <Text style={styles.detailValue}>{user?.address || 'N/A'}</Text>
+        </View>
+      </GlassCard>
+
       <View style={styles.logoutWrap}>
         <Pressable onPress={logout} style={({ pressed }) => [styles.logoutBtn, pressed && styles.logoutBtnPressed]}>
           <Text style={styles.logoutBtnText}>Logout</Text>
@@ -102,4 +143,35 @@ const styles = StyleSheet.create({
   },
   logoutBtnPressed: { opacity: 0.9 },
   logoutBtnText: { color: '#FFFFFF', fontSize: 16, fontWeight: '600' },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.xs,
+    borderBottomWidth: 1,
+    borderBottomColor: '#F0F0F0',
+  },
+  detailLabel: {
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  detailValue: {
+    color: colors.textPrimary,
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  menuRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: spacing.sm,
+  },
+  menuRowLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuRowText: {
+    fontSize: 14,
+    color: colors.textPrimary,
+    fontWeight: '500',
+  },
 });

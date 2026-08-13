@@ -1,0 +1,157 @@
+<svg width="350" height="390" viewBox="0 0 350 390" fill="none" xmlns="http://www.w3.org/2000/svg">
+<style>
+    /* Swaying head animation */
+    @keyframes sway {
+        0%, 100% {
+            transform: rotate(0deg);
+        }
+        50% {
+            transform: rotate(1.2deg) translateY(-0.5px);
+        }
+    }
+    /* Hair waving animation */
+    @keyframes hair-wave {
+        0%, 100% {
+            transform: skewX(0deg) scaleX(1);
+        }
+        50% {
+            transform: skewX(1deg) scaleX(1.01);
+        }
+    }
+    /* Blinking eyes animation */
+    @keyframes blink {
+        0%, 90%, 94%, 100% {
+            transform: scaleY(1);
+        }
+        92% {
+            transform: scaleY(0.1);
+        }
+    }
+    /* Micro eyebrow movement on blink */
+    @keyframes eyebrow-move {
+        0%, 90%, 94%, 100% {
+            transform: translateY(0px);
+        }
+        92% {
+            transform: translateY(1.2px);
+        }
+    }
+
+    .sari-head {
+        animation: sway 5s ease-in-out infinite;
+        transform-origin: 175px 235px;
+    }
+    .sari-hair-back {
+        animation: hair-wave 6s ease-in-out infinite;
+        transform-origin: 175px 80px;
+    }
+    .sari-eye-left {
+        animation: blink 4s ease-in-out infinite;
+        transform-origin: 140px 172px;
+    }
+    .sari-eye-right {
+        animation: blink 4s ease-in-out infinite;
+        transform-origin: 212px 172px;
+    }
+    .sari-eyebrow-left {
+        animation: eyebrow-move 4s ease-in-out infinite;
+        transform-origin: 113px 166px;
+    }
+    .sari-eyebrow-right {
+        animation: eyebrow-move 4s ease-in-out infinite;
+        transform-origin: 235px 163px;
+    }
+</style>
+
+<!-- Hair Back -->
+<path class="sari-hair-back" d="M148.182 256.059C148.594 255.983 148.995 255.848 149.373 255.668L181.794 240.141C183.306 239.417 185.081 239.499 186.52 240.36L206.808 252.494C207.458 252.883 208.199 253.122 208.955 253.182C229.891 254.842 238.836 251.36 247.989 240.329C249.443 238.576 251.863 237.883 254.08 238.404C258.982 239.556 267.885 240.498 275.352 235.007C280.307 231.364 282.265 226.27 282.924 221.787C283.523 217.712 288.417 213.35 292.466 212.591C296.654 211.806 301.633 209.447 306.275 203.608C312.819 195.377 313.374 187.772 312.773 183.009C312.415 180.169 313.66 176.858 315.669 174.818C318.826 171.614 322.65 165.507 322.926 154.607C323.222 142.925 318.706 135.767 315.255 132.028C313.375 129.991 312.457 126.666 312.632 123.899C312.839 120.611 312.268 115.637 309.129 108.935C307.644 105.763 305.94 103.495 304.206 101.879C300.909 98.8085 296.094 90.9809 296.891 86.5468C298.307 78.6606 297.847 67.6247 289.624 56.128C279.472 41.9347 265.982 38.18 257.755 37.2939C254.236 36.9149 250.857 33.2363 249.624 29.9188C248.371 26.5464 245.598 22.4301 239.671 18.5442C230.542 12.5587 222.223 13.9701 217.892 15.4511C215.935 16.12 213.669 15.9973 211.882 14.9559C207.095 12.1649 196.761 7.44649 184.215 9.50509C172.727 11.3901 164.574 20.6341 160.361 26.6956C158.518 29.3464 154.561 30.2412 151.609 28.9335C145.872 26.3919 135.846 23.8696 122.638 28.0591C107.842 32.7523 104.013 45.0569 103.058 52.194C102.674 55.0629 100.319 57.5968 97.4695 58.104C91.0496 59.2469 79.9615 62.6493 70.7821 72.7789C60.7475 83.8523 60.6814 98.5014 61.4012 105.709C61.6531 108.232 60.265 110.815 58.245 112.348C54.3688 115.288 48.6413 121.615 46.5192 134.15C44.8774 143.847 47.3941 150.502 50.368 154.758C52.6318 157.997 52.8223 164.201 50.7358 167.557C48.4994 171.154 46.5192 176.384 46.5192 183.627C46.5192 191.269 49.7971 196.055 53.3419 198.998C56.4888 201.61 58.6555 208.317 58.9364 212.397C59.1766 215.885 60.8387 220.3 65.5489 225.492C72.7154 233.393 80.5326 233.34 85.9117 231.847C89.3187 230.902 93.8174 232.488 95.7708 235.435C97.7418 238.409 100.822 241.842 105.511 244.522C110.391 247.31 115.477 247.499 119.517 246.906C123.235 246.36 127.367 249.33 129.631 252.33C133.017 256.816 139.932 257.593 148.182 256.059Z" fill="#323232"/>
+
+<!-- Neck (Fixed base) -->
+<rect x="141" y="185" width="68.2139" height="128.131" rx="13.7769" fill="white" stroke="#323232" stroke-width="4" stroke-linecap="round"/>
+<path d="M142.896 267.634V226.678H211.5C206.333 247.68 175.523 268.768 142.896 267.634Z" fill="#7E7E7E" fill-opacity="0.45"/>
+
+<!-- Sari Animated Head Group -->
+<g class="sari-head">
+    <!-- Ears -->
+    <path d="M107 161C120.45 161 131 170.811 131 182.5C131 194.189 120.45 204 107 204C93.5501 204 83 194.189 83 182.5C83 170.811 93.5501 161 107 161Z" fill="white" stroke="#323232" stroke-width="4"/>
+    <path d="M242 161C228.55 161 218 170.811 218 182.5C218 194.189 228.55 204 242 204C255.45 204 266 194.189 266 182.5C266 170.811 255.45 161 242 161Z" fill="white" stroke="#323232" stroke-width="4"/>
+    
+    <!-- Face / Head Base -->
+    <path d="M175.03 79C196.043 79.0001 212.473 90.8931 223.74 108.611C235.026 126.358 241 149.787 241 172.262C241 194.713 235.042 211.834 223.985 223.337C212.941 234.828 196.532 241 175.03 241C153.527 241 136.842 234.826 125.528 223.32C114.211 211.81 108 194.69 108 172.262C108 149.804 114.232 126.379 125.779 108.629C137.311 90.9027 154.009 79 175.03 79Z" fill="white" stroke="#323232" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Nose -->
+    <path d="M175 171C173.029 177.812 172 181.371 172 188.458C174.64 189.72 177.163 190.036 181.5 190" stroke="#323232" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Mouth -->
+    <path d="M167 205.5C170 209.167 177.8 214.3 185 205.5" stroke="#323232" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <!-- Cheeks (Blushing) -->
+    <g filter="url(#filter0_f_26_1982)">
+        <ellipse cx="135.5" cy="200.5" rx="9.5" ry="5.5" fill="#FC9D80"/>
+    </g>
+    <g filter="url(#filter1_f_26_1982)">
+        <ellipse cx="214.5" cy="200.5" rx="9.5" ry="5.5" fill="#FC9D80"/>
+    </g>
+    
+    <!-- Hair (Front Overlay) -->
+    <path d="M194 108C172.149 150.401 153.636 159.262 106.5 163.5C104.5 95.5 112.661 85.8036 183.5 75C241.144 94.2209 241.119 112.113 242.5 163.5C207.933 153.649 206.344 139.803 194 108Z" fill="#323232"/>
+    
+    <!-- Eyebrows -->
+    <path class="sari-eyebrow-left" d="M117 169.799L109.109 162.135" stroke="#323232" stroke-width="4"/>
+    <path class="sari-eyebrow-right" d="M231.049 165.439L239.609 161.635" stroke="#323232" stroke-width="4"/>
+    
+    <!-- Left Eye Pupil -->
+    <g class="sari-eye-left">
+        <path d="M139.768 163.178C141.829 163.178 143.657 164.293 144.953 166.021C146.249 167.748 147.035 170.112 147.035 172.701C147.035 175.291 146.249 177.655 144.953 179.382C143.657 181.11 141.829 182.225 139.768 182.225C137.706 182.225 135.878 181.11 134.582 179.382C133.286 177.655 132.5 175.291 132.5 172.701C132.5 170.112 133.286 167.748 134.582 166.021C135.878 164.293 137.706 163.178 139.768 163.178Z" fill="#323232" stroke="#323232" stroke-linecap="round"/>
+        <circle cx="142.616" cy="170.487" r="2.5" fill="white" stroke="#323232"/>
+    </g>
+    
+    <!-- Right Eye Pupil -->
+    <g class="sari-eye-right">
+        <path d="M211.768 163.178C213.829 163.178 215.657 164.293 216.953 166.021C218.249 167.748 219.035 170.112 219.035 172.701C219.035 175.291 218.249 177.655 216.953 179.382C215.657 181.11 213.829 182.225 211.768 182.225C209.706 182.225 207.878 181.11 206.582 179.382C205.286 177.655 204.5 175.291 204.5 172.701C204.5 170.112 205.286 167.748 206.582 166.021C207.878 164.293 209.706 163.178 211.768 163.178Z" fill="#323232" stroke="#323232" stroke-linecap="round"/>
+        <circle cx="214.616" cy="170.487" r="2" fill="white"/>
+    </g>
+    
+    <!-- Glasses Frame Bridge & Left/Right Lenses -->
+    <path d="M163.609 174.611C172.886 170.905 177.929 170.813 186.609 174.611" stroke="#323232" stroke-width="4" stroke-linecap="round"/>
+    
+    <!-- Left Lens -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M141.769 152.07L145.355 155.657L115.657 185.355L114.255 183.953C114.093 183.311 113.956 182.658 113.843 181.994C113.509 180.031 113.41 178.081 113.525 176.173L137.657 152.041C139.045 151.942 140.419 151.954 141.769 152.07Z" fill="white" fill-opacity="0.15"/>
+    <path d="M135.44 154.321C148.49 152.101 160.813 160.77 163.001 173.631C165.189 186.493 156.426 198.749 143.376 200.969C130.326 203.189 118.003 194.521 115.814 181.659C113.626 168.797 122.39 156.541 135.44 154.321Z" fill="url(#paint0_linear_26_1982)" fill-opacity="0.3" stroke="#323232" stroke-width="4"/>
+    
+    <!-- Right Lens -->
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M236.886 178.612C236.957 176.865 236.847 175.086 236.543 173.296C236.511 173.111 236.478 172.927 236.443 172.744L233.941 170.243L202.78 201.404L203.681 202.305C206.396 203.086 209.273 203.434 212.217 203.28L236.886 178.612Z" fill="white" fill-opacity="0.15"/>
+    <path d="M207.01 154.321C220.06 152.101 232.383 160.77 234.571 173.631C236.759 186.493 227.996 198.749 214.946 200.969C201.896 203.189 189.573 194.521 187.385 181.659C185.196 168.797 193.96 156.541 207.01 154.321Z" fill="url(#paint1_linear_26_1982)" fill-opacity="0.3" stroke="#323232" stroke-width="4"/>
+</g>
+
+<!-- Shoulders & Torso -->
+<path d="M140.181 271.032C140.638 270.821 141.303 270.989 141.637 271.566C157.781 299.54 196.874 297.35 209.064 271.821C209.396 271.127 210.144 270.922 210.623 271.139C237.581 283.357 255.284 296.353 267.373 313.32C279.476 330.307 286.102 351.482 290.512 380.355C290.604 380.958 290.132 381.5 289.537 381.5H59.4707C58.8779 381.5 58.4053 380.956 58.5 380.354C63.2634 350.036 71.0976 328.611 83.9307 311.852C96.7646 295.091 114.747 282.803 140.181 271.032Z" fill="white" stroke="#323232" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M112 288.742C119.48 283.735 123.887 281.372 132 277.168V329H221V278.314C229.292 282.502 233.661 285.365 241 290.304V329C245.418 329 249 332.582 249 337V379.5H101V337C101 332.582 104.582 329 109 329H112V288.742Z" fill="#323232"/>
+<path d="M241 379.5V344C241 339.582 237.418 336 233 336H117C112.582 336 109 339.582 109 344V379.5" stroke="white" stroke-width="0.5" stroke-linecap="round" stroke-dasharray="4 4"/>
+<line x1="118.5" y1="328.5" x2="118.5" y2="288.5" stroke="white" stroke-linecap="round" stroke-dasharray="4 4"/>
+<line x1="234.5" y1="328.5" x2="234.5" y2="288.5" stroke="white" stroke-linecap="round" stroke-dasharray="4 4"/>
+<circle cx="119" cy="335" r="6" fill="white"/>
+<circle cx="233" cy="335" r="6" fill="white"/>
+<path d="M137 361C137 354.925 141.925 350 148 350H201C207.075 350 212 354.925 212 361V380H137V361Z" fill="white" fill-opacity="0.5"/>
+
+<defs>
+<filter id="filter0_f_26_1982" x="114" y="183" width="43" height="35" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="6" result="effect1_foregroundBlur_26_1982"/>
+</filter>
+<filter id="filter1_f_26_1982" x="193" y="183" width="43" height="35" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+<feGaussianBlur stdDeviation="6" result="effect1_foregroundBlur_26_1982"/>
+</filter>
+<linearGradient id="paint0_linear_26_1982" x1="135.104" y1="152.349" x2="159.109" y2="201.635" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#C0C8FE" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint1_linear_26_1982" x1="206.674" y1="152.349" x2="230.679" y2="201.635" gradientUnits="userSpaceOnUse">
+<stop stop-color="white"/>
+<stop offset="1" stop-color="#C0C8FE" stop-opacity="0"/>
+</linearGradient>
+</defs>
+</svg>

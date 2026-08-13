@@ -5,10 +5,10 @@ import {
   StudentHomeScreen,
   StudentAttendanceScreen,
   StudentEventsScreen,
-  StudentFeesScreen,
   StudentGrievancesScreen,
   StudentNoticesScreen,
   StudentProfileScreen,
+  StudentChatbotScreen,
 } from '../screens/student';
 import { AnimatedTabBar } from '../components/AnimatedTabBar';
 import { ScreenTransitionWrapper } from '../components/ScreenTransitionWrapper';
@@ -70,20 +70,6 @@ export function StudentTabs() {
         )}
       </Tab.Screen>
       <Tab.Screen
-        name="StudentFees"
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Ionicons name="card-outline" size={22} color={color} />
-          ),
-        }}
-      >
-        {(props) => (
-          <ScreenTransitionWrapper>
-            <StudentFeesScreen {...props} />
-          </ScreenTransitionWrapper>
-        )}
-      </Tab.Screen>
-      <Tab.Screen
         name="StudentGrievances"
         options={{
           tabBarIcon: ({ focused, color }) => (
@@ -122,6 +108,20 @@ export function StudentTabs() {
         {(props) => (
           <ScreenTransitionWrapper>
             <StudentProfileScreen {...props} />
+          </ScreenTransitionWrapper>
+        )}
+      </Tab.Screen>
+      <Tab.Screen
+        name="StudentChatbot"
+        options={{
+          tabBarIcon: ({ focused, color }) => (
+            <Ionicons name="sparkles-outline" size={22} color={color} />
+          ),
+        }}
+      >
+        {(props) => (
+          <ScreenTransitionWrapper>
+            <StudentChatbotScreen {...props} />
           </ScreenTransitionWrapper>
         )}
       </Tab.Screen>

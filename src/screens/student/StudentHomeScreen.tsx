@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   Pressable,
   Platform,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
@@ -24,14 +25,7 @@ const AnimatedText = createAnimatedComponent(Text);
 import { Ionicons } from '@expo/vector-icons';
 import { Avatar, CircularStatChart, CircularPendingBadge } from '../../components';
 import { useAuth } from '../../context/AuthContext';
-import {
-  dummyAttendance,
-  dummyNotices,
-  dummyEvents,
-  dummyFees,
-  dummyExamSchedules,
-  dummyGrievances,
-} from '../../data/dummy';
+import { API_BASE_URL } from '../../config';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { colors, spacing, borderRadius } from '../../theme';
@@ -75,14 +69,53 @@ function AnimatedLogo() {
 export function StudentHomeScreen({ navigation }: { navigation?: any }) {
   const insets = useSafeAreaInsets();
   const { user } = useAuth();
-  const recentNotices = dummyNotices.slice(0, 2);
-  const upcomingEvents = dummyEvents.slice(0, 2);
-  const upcomingExams = dummyExamSchedules.slice(0, 2);
-  const recentGrievance = dummyGrievances.find((g) => g.status === 'in_progress') ?? dummyGrievances[0];
-  const pendingFees = dummyFees.filter((f) => f.status === 'pending');
+
+  const [loading, setLoading] = useState(true);
+  const [notices, setNotices] = useState<any[]>([]);
+  const [events, setEvents] = useState<any[]>([]);
+  const [exams, setExams] = useState<any[]>([]);
+  const [grievances, setGrievances] = useState<any[]>([]);
+  const [fees, setFees] = useState<any[]>([]);
+  const [attendance, setAttendance] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!user?.id) return;
+
+    setLoading(true);
+
+    const fetchNotices = fetch(`${API_BASE_URL}/api/student/notices`).then((res) => res.json());
+    const fetchEvents = fetch(`${API_BASE_URL}/api/student/events`).then((res) => res.json());
+    const fetchExams = fetch(`${API_BASE_URL}/api/student/exams`).then((res) => res.json());
+    const fetchGrievances = fetch(`${API_BASE_URL}/api/student/${user.id}/grievances`).then((res) => res.json());
+    const fetchFees = fetch(`${API_BASE_URL}/api/student/${user.id}/fees`).then((res) => res.json());
+    const fetchAttendance = fetch(`${API_BASE_URL}/api/student/${user.id}/attendance`).then((res) => res.json());
+
+    Promise.all([fetchNotices, fetchEvents, fetchExams, fetchGrievances, fetchFees, fetchAttendance])
+      .then(([noticesData, eventsData, examsData, grievancesData, feesData, attendanceData]) => {
+        setNotices(noticesData);
+        setEvents(eventsData);
+        setExams(examsData);
+        setGrievances(grievancesData);
+        setFees(feesData);
+        setAttendance(attendanceData);
+      })
+      .catch((err) => {
+        console.error('Home Screen Fetch Error:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [user?.id]);
+
+  const recentNotices = notices.slice(0, 2);
+  const upcomingEvents = events.slice(0, 2);
+  const upcomingExams = exams.slice(0, 2);
+  const recentGrievance = grievances.find((g) => g.status === 'in_progress') ?? grievances[0];
+  const pendingFees = fees.filter((f) => f.status === 'pending');
   const totalPending = pendingFees.reduce((sum, f) => sum + f.amount, 0);
-  const attendancePct = dummyAttendance[0]?.percentage ?? 0;
-  const presentCount = dummyAttendance.filter((a) => a.status === 'present').length;
+  const totalClasses = attendance.length;
+  const presentCount = attendance.filter((a) => a.status === 'present').length;
+  const attendancePct = totalClasses > 0 ? Math.round((presentCount / totalClasses) * 100) : 100;
 
   return (
     <View style={styles.outer}>
@@ -126,203 +159,234 @@ export function StudentHomeScreen({ navigation }: { navigation?: any }) {
         showsVerticalScrollIndicator={false}
       >
       <View style={styles.content}>
-        <View style={styles.statsRow}>
-          <CircularStatChart
-            value={presentCount}
-            max={dummyAttendance.length}
-            label="Present"
-            color={colors.success}
-            displayValue={`${presentCount}`}
-          />
-          <CircularStatChart
-            value={attendancePct}
-            max={100}
-            label="Attendance"
-            color={HEADER_ORANGE}
-            displayValue={`${attendancePct}%`}
-          />
-          <CircularPendingBadge
-            displayValue={`₹${(totalPending / 1000).toFixed(0)}k`}
-            label="Pending"
-            color={colors.warning}
-          />
-        </View>
-
-        <Text style={styles.sectionTitle}>Quick actions</Text>
-        <View style={styles.quickActions}>
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => navigation?.navigate('StudentAttendance')}
-          >
-            <View style={styles.actionCircle}>
-              <Ionicons name="calendar-outline" size={24} color={colors.textPrimary} />
-            </View>
-            <Text style={styles.actionLabel}>Attendance</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => navigation?.navigate('StudentFees')}
-          >
-            <View style={styles.actionCircle}>
-              <Ionicons name="card-outline" size={24} color={colors.textPrimary} />
-            </View>
-            <Text style={styles.actionLabel}>Fees</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => navigation?.navigate('StudentEvents')}
-          >
-            <View style={styles.actionCircle}>
-              <Ionicons name="megaphone-outline" size={24} color={colors.textPrimary} />
-            </View>
-            <Text style={styles.actionLabel}>Events</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.actionBtn}
-            onPress={() => navigation?.navigate('StudentGrievances')}
-          >
-            <View style={styles.actionCircle}>
-              <Ionicons name="chatbubble-outline" size={24} color={colors.textPrimary} />
-            </View>
-            <Text style={styles.actionLabel}>Grievances</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.promoCard}>
-          <View style={styles.promoText}>
-            <Text style={styles.promoTitle}>Pay fees and stay on track</Text>
-            <Text style={styles.promoDesc}>
-              Clear your pending dues to avoid late charges
-            </Text>
-            <TouchableOpacity
-              style={styles.promoBtn}
-              onPress={() => navigation?.navigate('StudentFees')}
-            >
-              <Text style={styles.promoBtnText}>Pay now</Text>
-            </TouchableOpacity>
+        {loading ? (
+          <View style={{ paddingVertical: 120, alignItems: 'center', justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color="#E07C3C" />
           </View>
-        </View>
-
-        <View style={styles.favouritesRow}>
-          <Text style={styles.favouritesTitle}>Upcoming</Text>
-          <TouchableOpacity onPress={() => navigation?.navigate('StudentEvents')}>
-            <Text style={styles.seeAll}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        {upcomingEvents.map((e, i) => (
-          <Animated.View
-            key={e.id}
-            entering={FadeInDown.delay(i * 50).springify().damping(20)}
-          >
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation?.navigate('StudentEvents')}
-            >
-              <View style={styles.listIcon}>
-                <Ionicons name="calendar" size={20} color={HEADER_ORANGE} />
-              </View>
-              <View style={styles.listContent}>
-                <Text style={styles.listTitle}>{e.title}</Text>
-                <Text style={styles.listMeta}>{e.venue} • {e.date}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-            </TouchableOpacity>
-          </Animated.View>
-        ))}
-
-        <View style={styles.favouritesRow}>
-          <Text style={styles.favouritesTitle}>Exam schedule</Text>
-          <TouchableOpacity onPress={() => navigation?.navigate('StudentExamSchedules')}>
-            <Text style={styles.seeAll}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        {upcomingExams.map((exam, i) => (
-          <Animated.View
-            key={exam.id}
-            entering={FadeInDown.delay((2 + i) * 50).springify().damping(20)}
-          >
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation?.navigate('StudentExamSchedules')}
-            >
-              <View style={[styles.listIcon, styles.listIconExam]}>
-                <Ionicons name="document-attach" size={20} color={colors.info} />
-              </View>
-              <View style={styles.listContent}>
-                <Text style={styles.listTitle}>{exam.subject}</Text>
-                <Text style={styles.listMeta}>{exam.date} • {exam.time} • {exam.venue}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-            </TouchableOpacity>
-          </Animated.View>
-        ))}
-
-        <View style={styles.favouritesRow}>
-          <Text style={styles.favouritesTitle}>Latest notices</Text>
-          <TouchableOpacity onPress={() => navigation?.navigate('StudentNotices')}>
-            <Text style={styles.seeAll}>See all</Text>
-          </TouchableOpacity>
-        </View>
-
-        {recentNotices.map((notice, i) => (
-          <Animated.View
-            key={notice.id}
-            entering={FadeInDown.delay((4 + i) * 50).springify().damping(20)}
-          >
-            <TouchableOpacity
-              style={styles.listItem}
-              onPress={() => navigation?.navigate('StudentNotices')}
-            >
-              <View style={[styles.listIcon, styles.listIconMuted]}>
-                <Ionicons name="document-text" size={20} color={colors.textSecondary} />
-              </View>
-              <View style={styles.listContent}>
-                <Text style={styles.listTitle}>{notice.title}</Text>
-                <Text style={styles.listMeta} numberOfLines={1}>{notice.body}</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-            </TouchableOpacity>
-          </Animated.View>
-        ))}
-
-        {recentGrievance && (
+        ) : (
           <>
+            <View style={styles.statsRow}>
+              <CircularStatChart
+                value={presentCount}
+                max={attendance.length || 1}
+                label="Present"
+                color={colors.success}
+                displayValue={`${presentCount}`}
+              />
+              <CircularStatChart
+                value={attendancePct}
+                max={100}
+                label="Attendance"
+                color={HEADER_ORANGE}
+                displayValue={`${attendancePct}%`}
+              />
+              <CircularPendingBadge
+                displayValue={`₹${(totalPending / 1000).toFixed(0)}k`}
+                label="Pending"
+                color={colors.warning}
+              />
+            </View>
+
+            <Text style={styles.sectionTitle}>Quick actions</Text>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.quickActionsScrollContent}
+              style={styles.quickActionsScroll}
+            >
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentAttendance')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="calendar-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Attendance</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentFees')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="card-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Fees</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentEvents')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="megaphone-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Events</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentGrievances')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="chatbubble-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Grievances</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentTimetable')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="time-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Timetable</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.actionBtn}
+                onPress={() => navigation?.navigate('StudentLibrary')}
+              >
+                <View style={styles.actionCircle}>
+                  <Ionicons name="book-outline" size={24} color={colors.textPrimary} />
+                </View>
+                <Text style={styles.actionLabel}>Library</Text>
+              </TouchableOpacity>
+            </ScrollView>
+
+            <View style={styles.promoCard}>
+              <View style={styles.promoText}>
+                <Text style={styles.promoTitle}>Pay fees and stay on track</Text>
+                <Text style={styles.promoDesc}>
+                  Clear your pending dues to avoid late charges
+                </Text>
+                <TouchableOpacity
+                  style={styles.promoBtn}
+                  onPress={() => navigation?.navigate('StudentFees')}
+                >
+                  <Text style={styles.promoBtnText}>Pay now</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
             <View style={styles.favouritesRow}>
-              <Text style={styles.favouritesTitle}>Your grievances</Text>
-              <TouchableOpacity onPress={() => navigation?.navigate('StudentGrievances')}>
+              <Text style={styles.favouritesTitle}>Upcoming</Text>
+              <TouchableOpacity onPress={() => navigation?.navigate('StudentEvents')}>
                 <Text style={styles.seeAll}>See all</Text>
               </TouchableOpacity>
             </View>
-            <Animated.View entering={FadeInDown.delay(200).springify().damping(20)}>
-              <TouchableOpacity
-                style={styles.listItem}
-                onPress={() => navigation?.navigate('StudentGrievances')}
+
+            {upcomingEvents.map((e, i) => (
+              <Animated.View
+                key={e.id}
+                entering={FadeInDown.delay(i * 50).springify().damping(20)}
               >
-                <View style={[styles.listIcon, styles.listIconGrievance]}>
-                  <Ionicons
-                    name={recentGrievance.status === 'resolved' ? 'checkmark-circle' : 'time'}
-                    size={20}
-                    color={recentGrievance.status === 'resolved' ? colors.success : colors.warning}
-                  />
-                </View>
-                <View style={styles.listContent}>
-                  <Text style={styles.listTitle}>{recentGrievance.subject}</Text>
-                  <Text style={styles.listMeta}>
-                    {recentGrievance.status === 'resolved' ? 'Resolved' : 'In progress'}
-                  </Text>
-                </View>
-                <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                <TouchableOpacity
+                  style={styles.listItem}
+                  onPress={() => navigation?.navigate('StudentEvents')}
+                >
+                  <View style={styles.listIcon}>
+                    <Ionicons name="calendar" size={20} color={HEADER_ORANGE} />
+                  </View>
+                  <View style={styles.listContent}>
+                    <Text style={styles.listTitle}>{e.title}</Text>
+                    <Text style={styles.listMeta}>{e.venue} • {e.date}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+
+            <View style={styles.favouritesRow}>
+              <Text style={styles.favouritesTitle}>Exam schedule</Text>
+              <TouchableOpacity onPress={() => navigation?.navigate('StudentExamSchedules')}>
+                <Text style={styles.seeAll}>See all</Text>
               </TouchableOpacity>
-            </Animated.View>
+            </View>
+
+            {upcomingExams.map((exam, i) => (
+              <Animated.View
+                key={exam.id}
+                entering={FadeInDown.delay((2 + i) * 50).springify().damping(20)}
+              >
+                <TouchableOpacity
+                  style={styles.listItem}
+                  onPress={() => navigation?.navigate('StudentExamSchedules')}
+                >
+                  <View style={[styles.listIcon, styles.listIconExam]}>
+                    <Ionicons name="document-attach" size={20} color={colors.info} />
+                  </View>
+                  <View style={styles.listContent}>
+                    <Text style={styles.listTitle}>{exam.subject}</Text>
+                    <Text style={styles.listMeta}>{exam.date} • {exam.time} • {exam.venue}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+
+            <View style={styles.favouritesRow}>
+              <Text style={styles.favouritesTitle}>Latest notices</Text>
+              <TouchableOpacity onPress={() => navigation?.navigate('StudentNotices')}>
+                <Text style={styles.seeAll}>See all</Text>
+              </TouchableOpacity>
+            </View>
+
+            {recentNotices.map((notice, i) => (
+              <Animated.View
+                key={notice.id}
+                entering={FadeInDown.delay((4 + i) * 50).springify().damping(20)}
+              >
+                <TouchableOpacity
+                  style={styles.listItem}
+                  onPress={() => navigation?.navigate('StudentNotices')}
+                >
+                  <View style={[styles.listIcon, styles.listIconMuted]}>
+                    <Ionicons name="document-text" size={20} color={colors.textSecondary} />
+                  </View>
+                  <View style={styles.listContent}>
+                    <Text style={styles.listTitle}>{notice.title}</Text>
+                    <Text style={styles.listMeta} numberOfLines={1}>{notice.body}</Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                </TouchableOpacity>
+              </Animated.View>
+            ))}
+
+            {recentGrievance && (
+              <>
+                <View style={styles.favouritesRow}>
+                  <Text style={styles.favouritesTitle}>Your grievances</Text>
+                  <TouchableOpacity onPress={() => navigation?.navigate('StudentGrievances')}>
+                    <Text style={styles.seeAll}>See all</Text>
+                  </TouchableOpacity>
+                </View>
+                <Animated.View entering={FadeInDown.delay(200).springify().damping(20)}>
+                  <TouchableOpacity
+                    style={styles.listItem}
+                    onPress={() => navigation?.navigate('StudentGrievances')}
+                  >
+                    <View style={[styles.listIcon, styles.listIconGrievance]}>
+                      <Ionicons
+                        name={recentGrievance.status === 'resolved' ? 'checkmark-circle' : 'time'}
+                        size={20}
+                        color={recentGrievance.status === 'resolved' ? colors.success : colors.warning}
+                      />
+                    </View>
+                    <View style={styles.listContent}>
+                      <Text style={styles.listTitle}>{recentGrievance.subject}</Text>
+                      <Text style={styles.listMeta}>
+                        {recentGrievance.status === 'resolved' ? 'Resolved' : 'In progress'}
+                      </Text>
+                    </View>
+                    <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+                  </TouchableOpacity>
+                </Animated.View>
+              </>
+            )}
+
+            <View style={styles.feeSummary}>
+              <Text style={styles.feeLabel}>Pending fees</Text>
+              <Text style={styles.feeAmount}>₹{totalPending.toLocaleString()}</Text>
+            </View>
           </>
         )}
-
-        <View style={styles.feeSummary}>
-          <Text style={styles.feeLabel}>Pending fees</Text>
-          <Text style={styles.feeAmount}>₹{totalPending.toLocaleString()}</Text>
-        </View>
       </View>
       </ScrollView>
     </View>
@@ -421,13 +485,19 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     marginTop: spacing.md,
   },
-  quickActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  quickActionsScroll: {
     marginBottom: spacing.lg,
+    marginHorizontal: -spacing.lg,
+    paddingHorizontal: spacing.lg,
+  },
+  quickActionsScrollContent: {
+    paddingRight: spacing.lg * 2,
+    flexDirection: 'row',
+    gap: spacing.md,
   },
   actionBtn: {
     alignItems: 'center',
+    width: 72,
   },
   actionCircle: {
     width: 56,
@@ -566,5 +636,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '700',
     marginTop: 4,
+  },
+  chatbotFab: {
+    position: 'absolute',
+    bottom: 24,
+    right: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#E07C3C',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 8,
+    shadowColor: '#E07C3C',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 6,
+    zIndex: 999,
   },
 });

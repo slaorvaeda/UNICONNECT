@@ -2,7 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { LoginScreen } from '../screens/auth/LoginScreen';
 import { StudentStack } from './StudentStack';
-import { TeacherTabs } from './TeacherTabs';
+import { TeacherStack } from './TeacherStack';
 import { AdminTabs } from './AdminTabs';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator();
 function MainByRole() {
   const { role } = useAuth();
   if (role === 'student') return <StudentStack />;
-  if (role === 'teacher') return <TeacherTabs />;
+  if (role === 'teacher') return <TeacherStack />;
   if (role === 'admin') return <AdminTabs />;
   return null;
 }

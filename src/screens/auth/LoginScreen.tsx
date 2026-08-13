@@ -55,7 +55,7 @@ export function LoginScreen() {
   const [error, setError] = useState('');
   const { login } = useAuth();
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setError('');
     if (!email.trim()) {
       setError('Enter email');
@@ -65,8 +65,11 @@ export function LoginScreen() {
       setError('Enter password');
       return;
     }
-    const ok = login(email.trim(), password);
-    if (!ok) setError('Invalid email or password. Use dummy: 123456');
+    try {
+      await login(email.trim(), password);
+    } catch (e: any) {
+      setError(e.message || 'Connection to backend failed.');
+    }
   };
 
   return (
