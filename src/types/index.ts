@@ -7,8 +7,16 @@ export interface User {
   role: Role;
   avatar?: string;
   studentId?: string;
+  employee_id?: string;
+  designation?: string;
   department?: string;
   year?: string;
+  section?: string;
+  dob?: string;
+  phone?: string;
+  gender?: string;
+  blood_group?: string;
+  address?: string;
 }
 
 export interface AttendanceRecord {

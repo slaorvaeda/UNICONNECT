@@ -657,7 +657,7 @@ export function TeacherHomeScreen() {
                   styles.schemeTab,
                   newMaterial.scheme === 'yearly' && styles.schemeTabActive,
                 ]}
-                onPress={() => setNewMaterial({ ...newMaterial, scheme: 'yearly', year: '3rd', semester: null })}
+                onPress={() => setNewMaterial({ ...newMaterial, scheme: 'yearly', year: '3rd', semester: '' })}
               >
                 <Text
                   style={[
@@ -673,7 +673,7 @@ export function TeacherHomeScreen() {
                   styles.schemeTab,
                   newMaterial.scheme === 'semester' && styles.schemeTabActive,
                 ]}
-                onPress={() => setNewMaterial({ ...newMaterial, scheme: 'semester', semester: '1st Semester', year: null })}
+                onPress={() => setNewMaterial({ ...newMaterial, scheme: 'semester', semester: '1st Semester', year: '' })}
               >
                 <Text
                   style={[

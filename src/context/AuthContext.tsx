@@ -46,8 +46,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email: userData.email,
         role: userData.role as Role,
         studentId: userData.student_id,
+        employee_id: userData.employee_id,
+        designation: userData.designation,
         department: userData.department,
         year: userData.year,
+        section: userData.section,
+        dob: userData.dob,
+        phone: userData.phone,
+        gender: userData.gender,
+        blood_group: userData.blood_group,
+        address: userData.address,
       };
 
       setUser(mappedUser);

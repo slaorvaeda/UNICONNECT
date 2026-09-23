@@ -53,6 +53,7 @@ export function StudentFeesScreen({ navigation }: { navigation?: any }) {
       {
         text: 'Pay Now',
         onPress: async () => {
+          if (!user) return;
           try {
             const res = await fetch(`${API_BASE_URL}/api/student/${user.id}/fees/${feeId}/pay`, {
               method: 'POST',

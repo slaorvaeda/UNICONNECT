@@ -63,7 +63,7 @@ export function GlassButton({
         scale.value = withSpring(1, springConfig);
       }}
       disabled={disabled || loading}
-      style={({ pressed }) => [
+      style={[
         styles.button,
         variant === 'primary' && styles.primary,
         isOutline && styles.outline,

@@ -35,7 +35,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentHomeScreen {...props} />
           </ScreenTransitionWrapper>
@@ -49,7 +49,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentAttendanceScreen {...props} />
           </ScreenTransitionWrapper>
@@ -63,7 +63,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentEventsScreen {...props} />
           </ScreenTransitionWrapper>
@@ -77,7 +77,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentGrievancesScreen {...props} />
           </ScreenTransitionWrapper>
@@ -91,7 +91,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentNoticesScreen {...props} />
           </ScreenTransitionWrapper>
@@ -105,7 +105,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentProfileScreen {...props} />
           </ScreenTransitionWrapper>
@@ -119,7 +119,7 @@ export function StudentTabs() {
           ),
         }}
       >
-        {(props) => (
+        {(props: any) => (
           <ScreenTransitionWrapper>
             <StudentChatbotScreen {...props} />
           </ScreenTransitionWrapper>

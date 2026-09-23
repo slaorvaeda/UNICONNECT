@@ -9,14 +9,14 @@ import {
   KeyboardAvoidingView,
   Platform,
   ActivityIndicator,
-  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SvgXml } from 'react-native-svg';
 import { colors } from '../../theme';
 import { API_BASE_URL } from '../../config';
+import { useAuth } from '../../context/AuthContext';
 
 interface ChatMessage {
   id: string;
@@ -197,11 +197,14 @@ const JUNUH_SVG_XML_ZOOMED = JUNUH_SVG_XML.replace(
 
 export function StudentChatbotScreen({ navigation }: { navigation: any }) {
   const insets = useSafeAreaInsets();
+  const { user } = useAuth();
+  const studentFirstName = user?.name ? user.name.split(' ')[0] : 'Student';
+
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       id: 'welcome',
       role: 'assistant',
-      content: "Hello! I am Junuh, your AI Smart Assistant. How can I help you today? I can answer questions about your attendance, class timetables, exam schedules, events, notices, or fees.",
+      content: `Hello ${studentFirstName}! I am Junuh, your campus AI assistant. How can I help you today? You can ask me about your attendance, timetable, exam schedules, events, circulars, or fees.`,
     },
   ]);
   const [inputText, setInputText] = useState('');
@@ -243,7 +246,10 @@ export function StudentChatbotScreen({ navigation }: { navigation: any }) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ messages: chatHistory }),
+        body: JSON.stringify({
+          messages: chatHistory,
+          student_id: user?.id ? Number(user.id) : undefined,
+        }),
       });
 
       const data = await response.json();

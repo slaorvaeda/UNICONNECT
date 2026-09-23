@@ -1824,7 +1824,7 @@ export function AdminHomeScreen() {
                   styles.schemeTab,
                   newSlot.scheme === 'yearly' && styles.schemeTabActive,
                 ]}
-                onPress={() => setNewSlot({ ...newSlot, scheme: 'yearly', semester: null })}
+                onPress={() => setNewSlot({ ...newSlot, scheme: 'yearly', semester: '' })}
               >
                 <Text
                   style={[

@@ -36,6 +36,14 @@ export const colors = {
 
   white: '#FFFFFF',
   black: '#000000',
-} as const;
+
+  shadow: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+};
 
 export type Colors = typeof colors;

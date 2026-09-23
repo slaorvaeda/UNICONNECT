@@ -21,7 +21,7 @@ export function AdminTabs() {
     >
       <Tab.Screen
         name="AdminHome"
-        component={(props) => (
+        component={(props: any) => (
           <ScreenTransitionWrapper>
             <AdminHomeScreen {...props} />
           </ScreenTransitionWrapper>
@@ -34,7 +34,7 @@ export function AdminTabs() {
       />
       <Tab.Screen
         name="AdminProfile"
-        component={(props) => (
+        component={(props: any) => (
           <ScreenTransitionWrapper>
             <AdminProfileScreen {...props} />
           </ScreenTransitionWrapper>

@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
   addBtnText: { color: colors.primary, fontWeight: '600' },
 
   modalOverlay: { flex: 1, justifyContent: 'flex-end' },
-  modalBackdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(0,0,0,0.4)' },
+  modalBackdrop: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(0,0,0,0.4)' },
   modalContent: {
     backgroundColor: colors.surface,
     borderTopLeftRadius: 20,

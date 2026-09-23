@@ -21,7 +21,7 @@ export function TeacherTabs() {
     >
       <Tab.Screen
         name="TeacherHome"
-        component={(props) => (
+        component={(props: any) => (
           <ScreenTransitionWrapper>
             <TeacherHomeScreen {...props} />
           </ScreenTransitionWrapper>
@@ -32,7 +32,7 @@ export function TeacherTabs() {
       />
       <Tab.Screen
         name="TeacherGrievances"
-        component={(props) => (
+        component={(props: any) => (
           <ScreenTransitionWrapper>
             <TeacherGrievancesScreen {...props} />
           </ScreenTransitionWrapper>
@@ -43,7 +43,7 @@ export function TeacherTabs() {
       />
       <Tab.Screen
         name="TeacherProfile"
-        component={(props) => (
+        component={(props: any) => (
           <ScreenTransitionWrapper>
             <TeacherProfileScreen {...props} />
           </ScreenTransitionWrapper>
