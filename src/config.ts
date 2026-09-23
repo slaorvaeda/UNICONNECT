@@ -1,12 +1,9 @@
-import { Platform } from 'react-native';
-
 /**
- * Configure your server IP here.
- * - For iOS Simulator, 'localhost' or '127.0.0.1' works.
- * - For Android Emulator, '10.0.2.2' maps to your computer's localhost.
- * - For a physical device running Expo Go, replace this with your computer's local IP address (e.g., '192.168.1.X').
+ * UniConnect API Configuration
+ * - Connected to Railway cloud backend for worldwide access.
+ * - Can be overridden locally via EXPO_PUBLIC_API_URL env variable.
  */
-const LOCAL_IP = process.env.EXPO_PUBLIC_LOCAL_IP || '192.168.1.102';
+export const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || 'https://web-production-66b7d.up.railway.app';
 
-export const API_BASE_URL = `http://${LOCAL_IP}:5001`;
 
